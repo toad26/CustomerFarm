@@ -1,95 +1,66 @@
 package com.customer.farm.customerfarm.Entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "farms", schema = "customer_farm")
 public class Farms {
-    private Integer id;
-    private Integer customersId;
-    private Integer usersId;
-    private String farmName;
-    private Integer farmValue;
+    private Long id;
+    private Customers customersId;
+    private String name;
+    private String address;
+    private List<Users> users = new ArrayList<>(0);
 
+    public Farms() {
+    }
     @Id
-    @Column(name = "id", nullable = false)
-    public Integer getId() {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(name = "customers_id", nullable = false)
-    public Integer getCustomersId() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customers_id")
+    public Customers getCustomersId() {
         return customersId;
     }
-
-    public void setCustomersId(int customersId) {
+    public void setCustomersId(Customers customersId) {
         this.customersId = customersId;
     }
 
-    public void setCustomersId(Integer customersId) {
-        this.customersId = customersId;
+    @Column(name = "name", nullable = false, length = 150)
+    public String getName() {
+        return name;
     }
 
-    @Basic
-    @Column(name = "users_id", nullable = false)
-    public Integer getUsersId() {
-        return usersId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setUsersId(int usersId) {
-        this.usersId = usersId;
+    @Column(name = "address", nullable = true, length = 150)
+    public String getAddress() {
+        return address;
     }
 
-    public void setUsersId(Integer usersId) {
-        this.usersId = usersId;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    @Basic
-    @Column(name = "farm_name", nullable = true, length = 255)
-    public String getFarmName() {
-        return farmName;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_farms", joinColumns = {
+            @JoinColumn(name = "farms_id", nullable = false, updatable = true) }, inverseJoinColumns = {
+            @JoinColumn(name = "users_id", nullable = false, updatable = true) })
+    public List<Users> getUsers() {
+        return users;
     }
-
-    public void setFarmName(String farmName) {
-        this.farmName = farmName;
-    }
-
-    @Basic
-    @Column(name = "farm_value", nullable = true)
-    public Integer getFarmValue() {
-        return farmValue;
-    }
-
-    public void setFarmValue(Integer farmValue) {
-        this.farmValue = farmValue;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Farms farms = (Farms) o;
-        return Objects.equals(id, farms.id) &&
-                Objects.equals(customersId, farms.customersId) &&
-                Objects.equals(usersId, farms.usersId) &&
-                Objects.equals(farmName, farms.farmName) &&
-                Objects.equals(farmValue, farms.farmValue);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, customersId, usersId, farmName, farmValue);
+    public void setUsers(List<Users> users) {
+        this.users = users;
     }
 }

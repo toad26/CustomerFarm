@@ -1,32 +1,30 @@
 package com.customer.farm.customerfarm.Entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "roles", schema = "customer_farm", catalog = "")
 public class Roles {
-    private Integer id;
+    private Long id;
     private String name;
-
+    private List<Users> users = new ArrayList<>(0);
+    public Roles() {
+    }
     @Id
-    @Column(name = "id", nullable = false)
-    public Integer getId() {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
-    @Basic
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 50)
     public String getName() {
         return name;
     }
@@ -35,13 +33,20 @@ public class Roles {
         this.name = name;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rolesId")
+    public List<Users> getUsers() {
+        return users;
+    }
+    public void setUsers(List<Users> users) {
+        this.users = users;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Roles roles = (Roles) o;
-        return Objects.equals(id, roles.id) &&
-                Objects.equals(name, roles.name);
+        Roles that = (Roles) o;
+        return id == that.id &&
+                Objects.equals(name, that.name);
     }
 
     @Override

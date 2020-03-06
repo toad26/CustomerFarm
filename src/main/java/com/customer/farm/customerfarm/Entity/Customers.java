@@ -1,63 +1,88 @@
 package com.customer.farm.customerfarm.Entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Customers {
-    private Integer id;
-    private String fullName;
-    private String company;
+@Table(name = "customers", schema = "customer_farm")
+public class Customers  {
+    private Long id;
+    private String name;
+    private String email;
+    private String address;
+    private List<Farms> farms = new ArrayList<>(0);
+    private List<Users> users = new ArrayList<>(0);
 
     @Id
-    @Column(name = "id", nullable = false)
-    public Integer getId() {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customersId")
+    public List<Farms> getFarms() {
+        return farms;
     }
 
-    @Basic
-    @Column(name = "full_name", nullable = true, length = 255)
-    public String getFullName() {
-        return fullName;
+    public void setFarms(List<Farms> farms) {
+        this.farms = farms;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customersId")
+    public List<Users> getUsers() {
+        return users;
     }
 
-    @Basic
-    @Column(name = "company", nullable = true, length = 255)
-    public String getCompany() {
-        return company;
+    public void setUsers(List<Users> users) {
+        this.users = users;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    @Column(name = "name", nullable = false, length = 150)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Column(name = "email", nullable = true, length = 150)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Column(name = "address", nullable = true, length = 150)
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Customers customers = (Customers) o;
-        return Objects.equals(id, customers.id) &&
-                Objects.equals(fullName, customers.fullName) &&
-                Objects.equals(company, customers.company);
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Customers that = (Customers) o;
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(email, that.email)
+                && Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullName, company);
+        return Objects.hash(id, name, email, address);
     }
 }

@@ -1,65 +1,61 @@
 package com.customer.farm.customerfarm.Entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "users", schema = "customer_farm")
 public class Users {
-    private Integer id;
-    private Integer rolesId;
-    private Integer customersId;
+    private Long id;
+    private Roles rolesId;
+    private Customers customersId;
+    private String name;
     private String username;
     private String password;
-    private String fullName;
-    private Integer registrationNumber;
+    private String address;
+    private List<Farms> farms = new ArrayList<>(0);
 
+    public Users() {}
     @Id
-    @Column(name = "id", nullable = false)
-    public Integer getId() {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(name = "roles_id", nullable = false)
-    public Integer getRolesId() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "roles_id")
+    public Roles getRolesId() {
         return rolesId;
     }
-
-    public void setRolesId(int rolesId) {
+    public void setRolesId(Roles rolesId) {
         this.rolesId = rolesId;
     }
 
-    public void setRolesId(Integer rolesId) {
-        this.rolesId = rolesId;
-    }
-
-    @Basic
-    @Column(name = "customers_id", nullable = false)
-    public Integer getCustomersId() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customers_id")
+    public Customers getCustomersId() {
         return customersId;
     }
-
-    public void setCustomersId(int customersId) {
+    public void setCustomersId(Customers customersId) {
         this.customersId = customersId;
     }
 
-    public void setCustomersId(Integer customersId) {
-        this.customersId = customersId;
+    @Column(name = "name", nullable = false, length = 150)
+    public String getName() {
+        return name;
     }
 
-    @Basic
-    @Column(name = "username", nullable = false, length = 150)
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Column(name = "username", nullable = false, length = 50)
     public String getUsername() {
         return username;
     }
@@ -68,7 +64,6 @@ public class Users {
         this.username = username;
     }
 
-    @Basic
     @Column(name = "password", nullable = false, length = 150)
     public String getPassword() {
         return password;
@@ -78,42 +73,42 @@ public class Users {
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "full_name", nullable = true, length = 200)
-    public String getFullName() {
-        return fullName;
+    @Column(name = "address", nullable = true, length = 150)
+    public String getAddress() {
+        return address;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    @Basic
-    @Column(name = "registration_number", nullable = true)
-    public Integer getRegistrationNumber() {
-        return registrationNumber;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_farms", joinColumns = {
+            @JoinColumn(name = "users_id", nullable = false, updatable = true) }, inverseJoinColumns = {
+            @JoinColumn(name = "farms_id", nullable = false, updatable = true) })
+    public List<Farms> getFarms() {
+        return farms;
     }
-
-    public void setRegistrationNumber(Integer registrationNumber) {
-        this.registrationNumber = registrationNumber;
+    public void setFarms(List<Farms> farms) {
+        this.farms = farms;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Users users = (Users) o;
-        return Objects.equals(id, users.id) &&
-                Objects.equals(rolesId, users.rolesId) &&
-                Objects.equals(customersId, users.customersId) &&
-                Objects.equals(username, users.username) &&
-                Objects.equals(password, users.password) &&
-                Objects.equals(fullName, users.fullName) &&
-                Objects.equals(registrationNumber, users.registrationNumber);
+        Users that = (Users) o;
+        return id == that.id &&
+                rolesId == that.rolesId &&
+                customersId == that.customersId &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(address, that.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rolesId, customersId, username, password, fullName, registrationNumber);
+        return Objects.hash(id, rolesId, customersId, name, username, password, address);
     }
 }

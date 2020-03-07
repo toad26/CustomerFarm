@@ -22,10 +22,12 @@ public class UsersController {
     @Autowired
     UsersRepository usersRepository;
 
-    @GetMapping("users")
-    public ResponseEntity<List> getAllUsers(){
-        List<Users> entities = usersRepository.findAll();
-        return ResponseEntity.ok().body(entities);
+    @PostMapping("users")
+    public ResponseEntity<Map<String, String>> getAllUsers(){
+       // List<Users> entities = usersRepository.findAll();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("token", "demotoken");
+        return ResponseEntity.ok().body(map);
     }
 
     @GetMapping("/users/{id}")
@@ -36,10 +38,10 @@ public class UsersController {
 		return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("/users")
-    public Users createUser(@Valid @RequestBody Users user){
-        return usersRepository.save(user);
-    }
+//    @PostMapping("/users")
+//    public Users createUser(@Valid @RequestBody Users user){
+//        return usersRepository.save(user);
+//    }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<Users> updateUser(@PathVariable(value = "id") Long userId,

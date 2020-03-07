@@ -1,14 +1,17 @@
 package com.customer.farm.customerfarm.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "farms", schema = "customer_farm")
-public class Farms {
+public class Farms implements Serializable {
     private Long id;
+    @JsonBackReference
     private Customers customersId;
     private String name;
     private String address;
@@ -53,10 +56,7 @@ public class Farms {
         this.address = address;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "users_farms", joinColumns = {
-            @JoinColumn(name = "farms_id", nullable = false, updatable = true) }, inverseJoinColumns = {
-            @JoinColumn(name = "users_id", nullable = false, updatable = true) })
+    @ManyToMany(mappedBy = "farms", fetch = FetchType.LAZY)
     public List<Users> getUsers() {
         return users;
     }

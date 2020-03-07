@@ -1,18 +1,25 @@
 package com.customer.farm.customerfarm.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "customers", schema = "customer_farm")
-public class Customers  {
+public class Customers  implements Serializable {
     private Long id;
     private String name;
     private String email;
     private String address;
+
+    @JsonManagedReference
     private List<Farms> farms = new ArrayList<>(0);
+
+    @JsonManagedReference
     private List<Users> users = new ArrayList<>(0);
 
     @Id

@@ -1,15 +1,21 @@
 package com.customer.farm.customerfarm.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NamedNativeQuery(name = "findUserByUsername", query = "SELECT * FROM users WHERE username=:username")
+@NamedNativeQuery(name = "findUserByUsernameAndPassword", query = "SELECT * FROM users WHERE username=:username and password=:password")
 @Table(name = "users", schema = "customer_farm")
-public class Users {
+public class Users implements Serializable {
     private Long id;
     private Roles rolesId;
+    @JsonBackReference
     private Customers customersId;
     private String name;
     private String username;
@@ -18,6 +24,7 @@ public class Users {
     private List<Farms> farms = new ArrayList<>(0);
 
     public Users() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
@@ -28,8 +35,8 @@ public class Users {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roles_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "roles_id", referencedColumnName = "id")
     public Roles getRolesId() {
         return rolesId;
     }

@@ -66,4 +66,12 @@ public class UsersController {
 		response.put("deleted", Boolean.TRUE);
 		return response;
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<Users> getUserByUsernamePassword(@RequestParam String username, @RequestParam String password) {
+
+        Users user = usersRepository.findUserByUsernameAndPassword(username, password);
+
+        return ResponseEntity.ok().body(user);
+    }
 }

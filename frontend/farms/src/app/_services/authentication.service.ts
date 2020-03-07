@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -19,12 +19,12 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(email: string, password: string) {
-        return this.http.post<any>(`users`, { email, password })
+  login(username: string, password: string) {
+        return this.http.post<any>(`login`, `username=${username}&password=${password}`, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
             .pipe(map(user => {
-                if (user && user.token) {
+                if (user && user.id) {
                     // store user details in local storage to keep user logged in
-                    localStorage.setItem('currentUser', JSON.stringify(user.result));
+                    localStorage.setItem('currentUser', JSON.stringify(user));
                     this.currentUserSubject.next(user);
                 }
 

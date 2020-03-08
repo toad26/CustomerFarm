@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NamedNativeQuery(name = "findFarmsByCustomersId", query = "SELECT * FROM farms WHERE customers_id=:customerId")
 @Table(name = "farms", schema = "customer_farm")
 public class Farms implements Serializable {
     private Long id;

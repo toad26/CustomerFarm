@@ -22,7 +22,7 @@ public class DefaultUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final Optional<Users> userEntity = appUserRepository.findUserByUsername(username);
+        final Optional<Users> userEntity = appUserRepository.findByUsername(username);
 
         if (userEntity.isPresent()) {
             final Users appUser = userEntity.get();

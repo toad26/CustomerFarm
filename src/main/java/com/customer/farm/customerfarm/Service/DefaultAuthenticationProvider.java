@@ -31,7 +31,7 @@ public class DefaultAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        final Optional<Users> appUser = this.appUserRepository.findUserByUsername(authentication.getName());
+        final Optional<Users> appUser = this.appUserRepository.findByUsername(authentication.getName());
 
         if (appUser.isPresent()) {
             final Users user = appUser.get();

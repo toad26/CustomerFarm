@@ -10,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @NamedNativeQuery(name = "findUserByUsername", query = "SELECT * FROM users WHERE username=:username")
+@NamedNativeQuery(name = "findByUsername", query = "SELECT * FROM users WHERE username=:username")
 @NamedNativeQuery(name = "findUserByUsernameAndPassword", query = "SELECT * FROM users WHERE username=:username and password=:password")
 @Table(name = "users", schema = "customer_farm")
 public class Users implements Serializable {

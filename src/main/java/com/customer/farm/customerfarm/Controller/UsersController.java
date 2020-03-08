@@ -1,20 +1,18 @@
 package com.customer.farm.customerfarm.Controller;
 
+import com.customer.farm.customerfarm.Entity.Farms;
 import com.customer.farm.customerfarm.Entity.Users;
+import com.customer.farm.customerfarm.Repository.FarmsRepository;
 import com.customer.farm.customerfarm.Repository.UsersRepository;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
+import java.util.*;
 
 @RestController
 public class UsersController {
@@ -22,12 +20,14 @@ public class UsersController {
     @Autowired
     UsersRepository usersRepository;
 
-    @PostMapping("users")
-    public ResponseEntity<Map<String, String>> getAllUsers(){
-       // List<Users> entities = usersRepository.findAll();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("token", "demotoken");
-        return ResponseEntity.ok().body(map);
+    @Autowired
+    FarmsRepository farmsRepository;
+
+    @GetMapping("/users")
+    public ResponseEntity<List<Users>> getAllUsers(){
+        List<Users> entities = usersRepository.findAll();
+
+        return ResponseEntity.ok().body(entities);
     }
 
     @GetMapping("/users/{id}")
@@ -38,10 +38,10 @@ public class UsersController {
 		return ResponseEntity.ok().body(user);
     }
 
-//    @PostMapping("/users")
-//    public Users createUser(@Valid @RequestBody Users user){
-//        return usersRepository.save(user);
-//    }
+    @PostMapping("/users")
+    public Users createUser(@Valid @RequestBody Users user){
+        return usersRepository.save(user);
+    }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<Users> updateUser(@PathVariable(value = "id") Long userId,
@@ -74,4 +74,19 @@ public class UsersController {
 
         return ResponseEntity.ok().body(user);
     }
+    @GetMapping("/users/farms")
+    public ResponseEntity<List<Farms>> getFarmsByLoggedUser(Principal principal) throws ResourceNotFoundException {
+//        final String loggedInUserName = principal.getName();
+        Users loggedUser = usersRepository.findUserByUsername(principal.getName());
+        List<Farms> farms = new ArrayList<>(0);
+
+        if(loggedUser.getRolesId().getName().equalsIgnoreCase("admin")){
+
+            farms  = farmsRepository.findFarmsByCustomersId(loggedUser.getCustomersId().getId());
+        }else if(loggedUser.getRolesId().getName().equalsIgnoreCase("user")){
+            farms = loggedUser.getFarms();
+        }
+        return ResponseEntity.ok(farms);
+    }
+
 }

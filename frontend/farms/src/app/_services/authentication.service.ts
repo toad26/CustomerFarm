@@ -20,9 +20,16 @@ export class AuthenticationService {
     }
 
   login(username: string, password: string) {
-        return this.http.post<any>(`login`, `username=${username}&password=${password}`, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+        return this.http.post<any>(`oauth/token`, `username=${username}&password=${password}&grant_type=password`,
+          { headers:
+              {
+                // 'Accept': '',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                 // 'Authorization' : 'Basic bXktY2xpZW50Om15LXNlY3JldA=='
+              }
+          })
             .pipe(map(user => {
-                if (user && user.id) {
+                if (user && user.access_token) {
                     // store user details in local storage to keep user logged in
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     this.currentUserSubject.next(user);

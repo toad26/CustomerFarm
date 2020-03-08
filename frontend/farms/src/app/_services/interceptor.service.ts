@@ -14,13 +14,23 @@ export class InterceptorService implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     let reqUrl = environment.apiBaseUrl;
-      req = req.clone({
-        headers: req.headers.set(
-          "Authorization",
-          "Bearer " + localStorage.getItem("token")
-        ),
-        url: reqUrl +""+ req.url
-      });
+      if (localStorage.getItem("access_token")) {
+        req = req.clone({
+          headers: req.headers.set(
+            "Authorization",
+            "Bearer " + localStorage.getItem("access_token")
+          ),
+          url: reqUrl + "" + req.url
+        });
+      } else {
+        req = req.clone({
+          headers: req.headers.set(
+            "Authorization",
+            "Basic bXktY2xpZW50Om15LXNlY3JldA=="
+          ),
+          url: reqUrl + "" + req.url
+        });
+      }
     return next.handle(req);
   }
 }

@@ -1,6 +1,7 @@
 package com.customer.farm.customerfarm.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.util.Objects;
 public class Users implements Serializable {
     private Long id;
     private Roles rolesId;
-    @JsonBackReference
+    @JsonBackReference(value = "customers")
     private Customers customersId;
     private String name;
     private String username;
@@ -53,6 +54,7 @@ public class Users implements Serializable {
     public void setCustomersId(Customers customersId) {
         this.customersId = customersId;
     }
+
 
     @Column(name = "name", nullable = false, length = 150)
     public String getName() {

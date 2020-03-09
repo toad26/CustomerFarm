@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NamedNativeQuery(name = "findFarmsByCustomersId", query = "SELECT * FROM farms WHERE customers_id=:customerId")
+@NamedNativeQuery(name = "findFarmsByCustomersId", query = "SELECT * FROM farms f JOIN customers c ON c.id = f.customers_id and f.customers_id=:customerId")
 @Table(name = "farms", schema = "customer_farm")
 public class Farms implements Serializable {
     private Long id;
-    @JsonBackReference
+    @JsonBackReference(value= "customers")
     private Customers customersId;
     private String name;
     private String address;

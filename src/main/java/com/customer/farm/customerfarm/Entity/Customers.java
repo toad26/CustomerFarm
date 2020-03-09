@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NamedNativeQuery(name = "getById", query = "SELECT * FROM customers WHERE id=:customersId")
 @Table(name = "customers", schema = "customer_farm")
 public class Customers  implements Serializable {
     private Long id;
@@ -91,5 +92,17 @@ public class Customers  implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email, address);
+    }
+
+    @Override
+    public String toString() {
+        return "Customers{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", farms=" + farms +
+                ", users=" + users +
+                '}';
     }
 }

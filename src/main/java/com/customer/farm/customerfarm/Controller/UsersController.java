@@ -1,9 +1,12 @@
 package com.customer.farm.customerfarm.Controller;
 
+import com.customer.farm.customerfarm.Entity.Customers;
 import com.customer.farm.customerfarm.Entity.Farms;
 import com.customer.farm.customerfarm.Entity.Users;
+import com.customer.farm.customerfarm.Repository.CustomersRepository;
 import com.customer.farm.customerfarm.Repository.FarmsRepository;
 import com.customer.farm.customerfarm.Repository.UsersRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,9 @@ public class UsersController {
 
     @Autowired
     FarmsRepository farmsRepository;
+
+    @Autowired
+    CustomersRepository customersRepository;
 
     @GetMapping("/users")
     public ResponseEntity<List<Users>> getAllUsers(){
@@ -69,11 +75,10 @@ public class UsersController {
 
     @PostMapping("/login")
     public ResponseEntity<Users> getUserByUsernamePassword(@RequestParam String username, @RequestParam String password) {
-
         Users user = usersRepository.findUserByUsernameAndPassword(username, password);
-
         return ResponseEntity.ok().body(user);
     }
+
     @GetMapping("/users/farms")
     public ResponseEntity<List<Farms>> getFarmsByLoggedUser(Principal principal) throws ResourceNotFoundException {
 //        final String loggedInUserName = principal.getName();
@@ -81,8 +86,10 @@ public class UsersController {
         List<Farms> farms = new ArrayList<>(0);
 
         if(loggedUser.getRolesId().getName().equalsIgnoreCase("admin")){
-
-            farms  = farmsRepository.findFarmsByCustomersId(loggedUser.getCustomersId().getId());
+            Customers c =  customersRepository.getOne(1l);
+            Hibernate.initialize(c.getClass());
+            
+            farms  = farmsRepository.findFarmsByCustomersId(c.getId().longValue());
         }else if(loggedUser.getRolesId().getName().equalsIgnoreCase("user")){
             farms = loggedUser.getFarms();
         }

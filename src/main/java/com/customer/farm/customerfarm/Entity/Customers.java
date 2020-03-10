@@ -1,5 +1,6 @@
 package com.customer.farm.customerfarm.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -17,10 +18,10 @@ public class Customers  implements Serializable {
     private String email;
     private String address;
 
-    @JsonManagedReference
+    @JsonIgnore
     private List<Farms> farms = new ArrayList<>(0);
 
-    @JsonManagedReference
+    @JsonIgnore
     private List<Users> users = new ArrayList<>(0);
 
     @Id
@@ -42,7 +43,7 @@ public class Customers  implements Serializable {
         this.farms = farms;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customersId")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customersId")
     public List<Users> getUsers() {
         return users;
     }

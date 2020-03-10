@@ -8,7 +8,9 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   register(user: User) {
-      return this.http.post(`users/`, user);
+      return this.http.post(`users/`, user,{headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }});
   }
 
 }

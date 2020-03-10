@@ -2,14 +2,18 @@ package com.customer.farm.customerfarm.Controller;
 
 import com.customer.farm.customerfarm.Entity.Customers;
 import com.customer.farm.customerfarm.Entity.Farms;
+import com.customer.farm.customerfarm.Entity.Roles;
 import com.customer.farm.customerfarm.Entity.Users;
 import com.customer.farm.customerfarm.Repository.CustomersRepository;
 import com.customer.farm.customerfarm.Repository.FarmsRepository;
+import com.customer.farm.customerfarm.Repository.RolesRepository;
 import com.customer.farm.customerfarm.Repository.UsersRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +28,12 @@ public class UsersController {
     UsersRepository usersRepository;
 
     @Autowired
+    CustomersRepository customersRepository;
+
+    @Autowired
+    RolesRepository rolesRepository;
+
+    @Autowired
     FarmsRepository farmsRepository;
 
     @Autowired
@@ -32,7 +42,6 @@ public class UsersController {
     @GetMapping("/users")
     public ResponseEntity<List<Users>> getAllUsers(){
         List<Users> entities = usersRepository.findAll();
-
         return ResponseEntity.ok().body(entities);
     }
 
@@ -44,9 +53,22 @@ public class UsersController {
 		return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("/users")
-    public Users createUser(@Valid @RequestBody Users user){
-        return usersRepository.save(user);
+    @RequestMapping(value = "/users", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public Users createUser(@RequestParam MultiValueMap<String,String> data){
+
+            Roles role = rolesRepository.getOne(Long.parseLong(data.getFirst("roles_id")));
+
+        Customers customer = customersRepository.getOne(Long.parseLong(data.getFirst("customers_id")));
+
+        Users u = new Users();
+        u.setName(data.getFirst("name"));
+
+        u.setRolesId(role);
+        u.setCustomersId(customer);
+        u.setUsername(data.getFirst("username"));
+        u.setPassword(data.getFirst("password"));
+        u.setAddress(data.getFirst("address"));
+        return usersRepository.save(u);
     }
 
     @PutMapping("/users/{id}")
